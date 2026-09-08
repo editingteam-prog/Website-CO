@@ -182,6 +182,18 @@
   .certificate .note{margin-top:1rem;font-size:.82rem;color:var(--text-muted);}
   .certificate .btn{width:100%;justify-content:center;margin-top:1.4rem;}
 
+  /* scale the hero + pricing card up on phones instead of just shrinking desktop sizes down */
+  @media (max-width:600px){
+    .eyebrow{font-size:.8rem;}
+    .hero-center h1{font-size:clamp(2.6rem,10vw,3.4rem);}
+    .certificate-centered{max-width:460px;}
+    .certificate{padding:1.75rem;}
+    .certificate h3.title{font-size:1.4rem;}
+    .ledger-row{font-size:1.05rem;margin-top:.9rem;}
+    .certificate .note{font-size:.92rem;}
+    .certificate .btn{font-size:1rem;padding:1em 1.5em;}
+  }
+
   /* testimonials */
   .t-carousel-wrap{position:relative;}
   .t-carousel{
