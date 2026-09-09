@@ -184,14 +184,46 @@
 
   /* scale the hero + pricing card up on phones instead of just shrinking desktop sizes down */
   @media (max-width:600px){
-    .eyebrow{font-size:.8rem;}
-    .hero-center h1{font-size:clamp(2.6rem,10vw,3.4rem);}
-    .certificate-centered{max-width:460px;}
-    .certificate{padding:1.75rem;}
-    .certificate h3.title{font-size:1.4rem;}
-    .ledger-row{font-size:1.05rem;margin-top:.9rem;}
-    .certificate .note{font-size:.92rem;}
-    .certificate .btn{font-size:1rem;padding:1em 1.5em;}
+    /* scale the whole page up for phones rather than just shrinking desktop sizes down —
+       scrolling more is fine, cramped/tiny text is not */
+    .eyebrow{font-size:.85rem;}
+    .hero-center h1{font-size:clamp(2.7rem,11vw,3.6rem);}
+    .hero-center .lede{
+      white-space:normal;font-size:1.05rem;line-height:1.5;
+      max-width:32ch;margin-left:auto;margin-right:auto;
+    }
+    .certificate-centered{max-width:480px;}
+    .certificate{padding:1.75rem 1.5rem;}
+    .certificate h3.title{font-size:1.5rem;}
+    .ledger-row{font-size:1.15rem;margin-top:1rem;}
+    .certificate .note{font-size:1rem;}
+    .certificate .btn{font-size:1.1rem;padding:1.1em 1.5em;}
+
+    .section-head h2{font-size:2rem;}
+    .section-head p{font-size:1.05rem;}
+
+    .t-card{flex:0 0 88vw;padding:1.75rem 1.5rem;}
+    .t-card blockquote{font-size:1.1rem;line-height:1.5;}
+    .t-card footer .name{font-size:.82rem;}
+    .t-card footer .role{font-size:.88rem;}
+
+    .archive-teaser p, .section-head p{font-size:1.05rem;}
+    .mini-preview{width:60px;height:78px;}
+    .mini-preview .num{font-size:1.1rem;}
+
+    .band h2{font-size:1.7rem;}
+    .band .btn{font-size:1rem;}
+
+    footer.site .legal{font-size:.82rem;}
+    footer.site nav a{font-size:.95rem;}
+
+    .page-view .hero-sm h1{font-size:2.2rem;}
+    .page-view .hero-sm p{font-size:1.05rem;}
+    .res-preview{width:120px;}
+    .res-body h3{font-size:1.3rem;}
+    .res-body p.desc{font-size:1rem;}
+    .tag{font-size:.75rem;}
+    .open, .copy-btn{font-size:.9rem;}
   }
 
   /* testimonials */
