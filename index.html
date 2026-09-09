@@ -163,10 +163,17 @@
   .ledger-row .v{white-space:nowrap;font-weight:600;color:var(--text);}
   .certificate .note{margin-top:1rem;font-size:.82rem;color:var(--text-muted);}
   .rate-timer{
-    margin-top:.4rem;font-family:'IBM Plex Mono',monospace;font-size:.78rem;
-    color:var(--gold-text);font-variant-numeric:tabular-nums;
+    margin-top:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem;
+    font-family:'IBM Plex Mono',monospace;font-size:.85rem;font-weight:600;
+    color:var(--gold-ink);font-variant-numeric:tabular-nums;
+    background:var(--gold);border-radius:999px;padding:.6rem 1.1rem;
   }
-  .rate-timer .timer-value{font-weight:600;}
+  .rate-timer .timer-value{font-weight:700;font-size:1.05rem;}
+  .rate-timer .timer-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--gold-ink);flex:none;
+    animation:timer-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes timer-pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
   .certificate .btn{width:100%;justify-content:center;margin-top:1.4rem;}
 
   /* scale the hero + pricing card up on phones instead of just shrinking desktop sizes down */
@@ -302,8 +309,11 @@
   .scroll-cue{
     position:fixed;left:50%;bottom:calc(1.5rem + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);
     z-index:15;display:flex;flex-direction:column;align-items:center;gap:.4rem;
-    opacity:1;pointer-events:auto;transition:opacity .3s ease;
+    opacity:1;pointer-events:auto;transition:opacity .3s ease, transform .15s ease;
+    cursor:pointer;
   }
+  .scroll-cue:hover{transform:translateX(-50%) translateY(-2px);}
+  .scroll-cue:active{transform:translateX(-50%) translateY(0);}
   .scroll-cue span{
     font-family:'IBM Plex Mono';font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;
     color:var(--text-muted);
@@ -461,9 +471,9 @@
         <h3 class="title">Founding member rate</h3>
         <div class="ledger-row"><span class="k">Regular</span><span class="fill"></span><span class="v" style="text-decoration:line-through;color:var(--text-muted);font-weight:500;">$47/mo</span></div>
         <div class="ledger-row"><span class="k">Founding rate</span><span class="fill"></span><span class="v" style="color:var(--gold-text);">$25/mo</span></div>
-        <p class="rate-timer">Rate resets in <span class="timer-value" id="rateTimerValue">--:--:--</span></p>
+        <p class="rate-timer"><span class="timer-dot"></span>Rate resets in <span class="timer-value" id="rateTimerValue">--:--:--</span></p>
         <p class="note">Weekly mentorship calls. No upcharges. Cancel anytime.</p>
-        <a class="btn btn-primary" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Become a Homeowner →</a>
+        <a class="btn btn-primary" id="signupBtn" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Become a Homeowner →</a>
       </div>
     </div>
   </section>
@@ -777,6 +787,10 @@
         cue.style.opacity = past ? '0' : '1';
         cue.style.pointerEvents = past ? 'none' : 'auto';
       }, {passive:true});
+      cue.addEventListener('click', function(){
+        var target = document.getElementById('signupBtn');
+        if(target) target.scrollIntoView({behavior:'smooth', block:'center'});
+      });
     }
   })();
 
