@@ -189,8 +189,14 @@
 
   /* scale the hero + pricing card up on phones instead of just shrinking desktop sizes down */
   @media (max-width:600px){
-    /* the fixed bottom "Scroll" cue can collide with the taller mobile hero/pricing card below it */
-    .scroll-cue{display:none;}
+    /* give the scroll cue real visual weight on phones — bigger, on its own blurred pill */
+    .scroll-cue{
+      padding:.6rem 1.1rem;border-radius:999px;
+      background:rgba(241,239,232,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+      border:1px solid var(--line);box-shadow:0 6px 20px -6px rgba(0,0,0,.18);
+    }
+    .scroll-cue span{font-size:.8rem;}
+    .scroll-cue .chevron{width:16px;height:16px;border-width:3px;}
 
     /* scale the whole page up for phones rather than just shrinking desktop sizes down —
        scrolling more is fine, cramped/tiny text is not */
@@ -237,7 +243,7 @@
   /* testimonials */
   .t-carousel-wrap{position:relative;}
   .t-carousel{
-    display:flex;gap:1.25rem;overflow-x:auto;
+    display:flex;gap:1.25rem;overflow-x:auto;touch-action:pan-x;
     -webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:.25rem;
   }
   .t-carousel::-webkit-scrollbar{display:none;}
@@ -428,9 +434,9 @@
   <section class="section" id="pricing">
     <div class="wrap">
       <div class="hero-center">
-        <p class="eyebrow" style="justify-content:center;">Stop renting</p>
+        <p class="eyebrow" style="justify-content:center;">Buy your first home</p>
         <h1>Nobody taught you this way to <em>own</em> a home.</h1>
-        <p class="lede">NO CREDIT. NO MONEY FOR A DOWN PAYMENT. NO BANK APPLICATION.</p>
+        <p class="lede">NO CREDIT. NO DOWNPAYMENT. NO BANK APPLICATION.</p>
       </div>
 
       <div class="certificate certificate-centered">
@@ -761,6 +767,11 @@
       // touch has no hover to pause on afterward, so give it a real reading window
       pauseFor(lastPointerType === 'touch' ? 5000 : 400);
     });
+    // touch fallback: some mobile browsers/webviews don't fire pointer events reliably,
+    // and without this the auto-scroll interval fights every swipe attempt
+    track.addEventListener('touchstart', function(){ pointerActive = true; lastPointerType = 'touch'; }, {passive:true});
+    window.addEventListener('touchend', function(){ pointerActive = false; pauseFor(5000); }, {passive:true});
+    window.addEventListener('touchcancel', function(){ pointerActive = false; pauseFor(1000); }, {passive:true});
 
     if(!reduceMotion){
       var TICK_MS = 30;
