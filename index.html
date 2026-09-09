@@ -162,7 +162,7 @@
 
   /* hero + pricing */
   .hero-center{max-width:700px;margin:0 auto;text-align:center;}
-  .hero-center h1{font-size:clamp(2.3rem,4vw + 1rem,3.75rem);margin-top:1rem;}
+  .hero-center h1{font-size:clamp(2.3rem,4vw + 1rem,3.75rem);}
   .hero-center .lede{
     margin-left:auto;margin-right:auto;max-width:none;
     white-space:nowrap;font-size:clamp(.46rem,2.15vw,1.15rem);
@@ -170,9 +170,7 @@
   .certificate-centered{max-width:420px;width:100%;margin:2.75rem auto 0;}
 
   .certificate{
-    background:
-      repeating-linear-gradient(0deg, rgba(154,116,19,.09) 0px, rgba(154,116,19,.09) 1px, transparent 1px, transparent 28px),
-      var(--surface);
+    background:var(--surface);
     border:1px solid var(--line);border-radius:6px;padding:clamp(1.6rem,3vw,2.2rem);
     position:relative;
   }
@@ -185,6 +183,11 @@
   .ledger-row .fill{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-4px);}
   .ledger-row .v{white-space:nowrap;font-weight:600;color:var(--text);}
   .certificate .note{margin-top:1rem;font-size:.82rem;color:var(--text-muted);}
+  .rate-timer{
+    margin-top:.4rem;font-family:'IBM Plex Mono',monospace;font-size:.78rem;
+    color:var(--gold-text);font-variant-numeric:tabular-nums;
+  }
+  .rate-timer .timer-value{font-weight:600;}
   .certificate .btn{width:100%;justify-content:center;margin-top:1.4rem;}
 
   /* scale the hero + pricing card up on phones instead of just shrinking desktop sizes down */
@@ -434,7 +437,6 @@
   <section class="section" id="pricing">
     <div class="wrap">
       <div class="hero-center">
-        <p class="eyebrow" style="justify-content:center;">Buy your first home</p>
         <h1>Nobody taught you this way to <em>own</em> a home.</h1>
         <p class="lede">NO CREDIT. NO DOWNPAYMENT. NO BANK APPLICATION.</p>
       </div>
@@ -445,6 +447,7 @@
         <h3 class="title">Founding member rate</h3>
         <div class="ledger-row"><span class="k">Regular</span><span class="fill"></span><span class="v" style="text-decoration:line-through;color:var(--text-muted);font-weight:500;">$47/mo</span></div>
         <div class="ledger-row"><span class="k">Founding rate</span><span class="fill"></span><span class="v" style="color:var(--gold-text);">$25/mo</span></div>
+        <p class="rate-timer">Rate resets in <span class="timer-value" id="rateTimerValue">--:--:--</span></p>
         <p class="note">Weekly mentorship calls. No upcharges. Cancel anytime.</p>
         <a class="btn btn-primary" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Become a Homeowner →</a>
       </div>
@@ -682,6 +685,23 @@
     }
   }
   (function(){
+    var el = document.getElementById('rateTimerValue');
+    if(!el) return;
+    function pad(n){ return n < 10 ? '0' + n : '' + n; }
+    function tick(){
+      var now = new Date();
+      var midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+      var diff = midnight - now;
+      var h = Math.floor(diff / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      el.textContent = pad(h) + ':' + pad(m) + ':' + pad(s);
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+
+  (function(){
     var h = location.hash;
     if(h === '#resources' || h.indexOf('#resources-') === 0){
       openResources();
@@ -712,6 +732,9 @@
     var pauseUntil = 0;
     var pointerActive = false;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // touch devices can leave a tapped element permanently matching :hover (no real pointer to
+    // "leave" it) — only trust :hover as a pause signal on devices that actually have one
+    var supportsHover = window.matchMedia('(hover: hover)').matches;
 
     function cardStep(){
       var card = track.querySelector('.t-card');
@@ -784,7 +807,7 @@
           virtualScroll = track.scrollLeft;
         }
         var centerCard = track.querySelector('.t-card.is-center');
-        var hoveringCenter = centerCard && centerCard.matches(':hover');
+        var hoveringCenter = supportsHover && centerCard && centerCard.matches(':hover');
         var paused = hoveringCenter || pointerActive || performance.now() < pauseUntil;
         if(!paused){
           virtualScroll += AUTO_SPEED;
