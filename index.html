@@ -254,8 +254,10 @@
   .t-card{
     position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;
     padding:1.5rem 1.4rem;display:flex;flex-direction:column;gap:1rem;
-    flex:0 0 clamp(250px,80vw,320px);
+    flex:0 0 clamp(250px,80vw,320px);cursor:pointer;
+    transition:border-color .15s ease, box-shadow .15s ease;
   }
+  .t-card:hover{border-color:var(--gold-deep);box-shadow:0 6px 20px -8px rgba(0,0,0,.12);}
   .t-arrows{display:flex;justify-content:center;gap:1rem;margin-top:1.4rem;}
   .t-arrow{
     width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
@@ -268,6 +270,38 @@
   .t-card footer{border-top:1px solid var(--line-soft);padding-top:.85rem;}
   .t-card footer .name{font-family:'IBM Plex Mono';font-size:.72rem;letter-spacing:.04em;color:var(--gold-text);}
   .t-card footer .role{font-size:.78rem;color:var(--text-muted);margin-top:.2rem;}
+
+  /* testimonial lightbox */
+  .t-lightbox{
+    display:none;position:fixed;inset:0;z-index:70;
+    align-items:center;justify-content:center;padding:1.5rem;
+  }
+  .t-lightbox.is-open{display:flex;}
+  .t-lightbox-backdrop{
+    position:absolute;inset:0;background:rgba(20,17,14,.5);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  .t-lightbox-card{
+    position:relative;z-index:1;background:var(--surface);border:1px solid var(--line);
+    border-radius:8px;padding:2.25rem 1.9rem;max-width:480px;width:100%;
+    box-shadow:0 24px 64px -16px rgba(0,0,0,.35);
+    animation:lightbox-in .2s ease;
+  }
+  @keyframes lightbox-in{from{opacity:0;transform:scale(.94);}to{opacity:1;transform:scale(1);}}
+  .t-lightbox-card blockquote{margin:0;font-size:1.2rem;line-height:1.55;color:var(--text);}
+  .t-lightbox-card footer{border-top:1px solid var(--line-soft);margin-top:1.5rem;padding-top:1.1rem;}
+  .t-lightbox-card footer .name{font-family:'IBM Plex Mono';font-size:.8rem;letter-spacing:.04em;color:var(--gold-text);}
+  .t-lightbox-card footer .role{font-size:.88rem;color:var(--text-muted);margin-top:.25rem;}
+  .t-lightbox-close{
+    position:absolute;top:.85rem;right:.85rem;width:36px;height:36px;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface);color:var(--text-muted);
+    display:grid;place-items:center;font-size:1.3rem;line-height:1;cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .t-lightbox-close:hover{border-color:var(--gold);color:var(--gold-text);}
+  @media (prefers-reduced-motion:reduce){
+    .t-lightbox-card{animation:none;}
+  }
 
   /* closing band */
   .band{background:var(--gold);color:var(--gold-ink);padding:clamp(2.25rem,4vw,3rem) 0;}
@@ -521,6 +555,18 @@
     </div>
   </section>
 
+  <div class="t-lightbox" id="tLightbox" aria-hidden="true">
+    <div class="t-lightbox-backdrop" id="tLightboxBackdrop"></div>
+    <article class="t-lightbox-card">
+      <button class="t-lightbox-close" id="tLightboxClose" aria-label="Close">&times;</button>
+      <blockquote id="tLightboxQuote"></blockquote>
+      <footer>
+        <div class="name" id="tLightboxName"></div>
+        <div class="role" id="tLightboxRole"></div>
+      </footer>
+    </article>
+  </div>
+
   <section class="section" id="archive">
     <div class="wrap">
       <div class="section-head reveal" style="margin-bottom:0;">
@@ -732,10 +778,8 @@
     var half = 0;
     var pauseUntil = 0;
     var pointerActive = false;
+    var lightboxOpen = false;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // touch devices can leave a tapped element permanently matching :hover (no real pointer to
-    // "leave" it) — only trust :hover as a pause signal on devices that actually have one
-    var supportsHover = window.matchMedia('(hover: hover)').matches;
 
     function cardStep(){
       var card = track.querySelector('.t-card');
@@ -749,53 +793,67 @@
 
     function pauseFor(ms){ pauseUntil = Math.max(pauseUntil, performance.now() + ms); }
 
-    function updateCenterCard(){
-      var trackRect = track.getBoundingClientRect();
-      var centerX = trackRect.left + trackRect.width / 2;
-      var closest = null, closestDist = Infinity;
-      var cards = track.querySelectorAll('.t-card');
-      for(var i = 0; i < cards.length; i++){
-        var r = cards[i].getBoundingClientRect();
-        var dist = Math.abs((r.left + r.width / 2) - centerX);
-        if(dist < closestDist){ closestDist = dist; closest = cards[i]; }
-      }
-      for(var j = 0; j < cards.length; j++){
-        if(cards[j] !== closest) cards[j].classList.remove('is-center');
-      }
-      if(closest) closest.classList.add('is-center');
-    }
-    updateCenterCard();
-    window.addEventListener('resize', updateCenterCard);
-
     track.addEventListener('scroll', function(){
       if(half > 0 && track.scrollLeft >= half - 2){
         track.scrollLeft -= half;
       }
-      updateCenterCard();
     }, {passive:true});
 
     if(next) next.addEventListener('click', function(){
-      pauseFor(900);
+      pauseFor(500);
       track.scrollBy({left: cardStep(), behavior:'smooth'});
     });
     if(prev) prev.addEventListener('click', function(){
-      pauseFor(900);
+      pauseFor(500);
       if(track.scrollLeft < cardStep()) track.scrollLeft += half;
       track.scrollBy({left: -cardStep(), behavior:'smooth'});
     });
 
-    var lastPointerType = 'mouse';
-    track.addEventListener('pointerdown', function(e){ pointerActive = true; lastPointerType = e.pointerType || 'mouse'; });
-    window.addEventListener('pointerup', function(){
-      pointerActive = false;
-      // touch has no hover to pause on afterward, so give it a real reading window
-      pauseFor(lastPointerType === 'touch' ? 5000 : 400);
+    // auto-scroll runs permanently — only pause while the user is actively dragging/swiping
+    // (so our own writes don't fight their gesture) or while a testimonial is open
+    track.addEventListener('pointerdown', function(){ pointerActive = true; });
+    window.addEventListener('pointerup', function(){ pointerActive = false; pauseFor(250); });
+    track.addEventListener('touchstart', function(){ pointerActive = true; }, {passive:true});
+    window.addEventListener('touchend', function(){ pointerActive = false; pauseFor(250); }, {passive:true});
+    window.addEventListener('touchcancel', function(){ pointerActive = false; pauseFor(250); }, {passive:true});
+
+    // --- lightbox: click/tap a card to open it enlarged, blurred background, until closed ---
+    var lightbox = document.getElementById('tLightbox');
+    var lightboxQuote = document.getElementById('tLightboxQuote');
+    var lightboxName = document.getElementById('tLightboxName');
+    var lightboxRole = document.getElementById('tLightboxRole');
+    var lightboxClose = document.getElementById('tLightboxClose');
+    var lightboxBackdrop = document.getElementById('tLightboxBackdrop');
+
+    function openLightbox(card){
+      var quote = card.querySelector('blockquote');
+      var name = card.querySelector('footer .name');
+      var role = card.querySelector('footer .role');
+      if(!lightbox || !quote) return;
+      lightboxQuote.textContent = quote.textContent;
+      lightboxName.textContent = name ? name.textContent : '';
+      lightboxRole.textContent = role ? role.textContent : '';
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      lightboxOpen = true;
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox(){
+      if(!lightbox) return;
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      lightboxOpen = false;
+      document.body.style.overflow = '';
+    }
+    track.addEventListener('click', function(e){
+      var card = e.target.closest('.t-card');
+      if(card) openLightbox(card);
     });
-    // touch fallback: some mobile browsers/webviews don't fire pointer events reliably,
-    // and without this the auto-scroll interval fights every swipe attempt
-    track.addEventListener('touchstart', function(){ pointerActive = true; lastPointerType = 'touch'; }, {passive:true});
-    window.addEventListener('touchend', function(){ pointerActive = false; pauseFor(5000); }, {passive:true});
-    window.addEventListener('touchcancel', function(){ pointerActive = false; pauseFor(1000); }, {passive:true});
+    if(lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+    if(lightboxBackdrop) lightboxBackdrop.addEventListener('click', closeLightbox);
+    window.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && lightboxOpen) closeLightbox();
+    });
 
     if(!reduceMotion){
       var TICK_MS = 30;
@@ -807,9 +865,7 @@
         if(Math.abs(track.scrollLeft - lastSyncedInt) > 0.6 && Math.abs(track.scrollLeft - Math.round(virtualScroll)) > 1){
           virtualScroll = track.scrollLeft;
         }
-        var centerCard = track.querySelector('.t-card.is-center');
-        var hoveringCenter = supportsHover && centerCard && centerCard.matches(':hover');
-        var paused = hoveringCenter || pointerActive || performance.now() < pauseUntil;
+        var paused = pointerActive || lightboxOpen || performance.now() < pauseUntil;
         if(!paused){
           virtualScroll += AUTO_SPEED;
           if(half > 0 && virtualScroll >= half) virtualScroll -= half;
