@@ -856,23 +856,44 @@
     });
 
     if(!reduceMotion){
-      var TICK_MS = 30;
-      var AUTO_SPEED = 0.6; // px per tick, slow drift
+      var PX_PER_SEC = 55; // clearly-visible drift speed (previous speed was too subtle against wide mobile cards)
       var virtualScroll = track.scrollLeft; // scrollLeft is integer-rounded; track our own float
       var lastSyncedInt = track.scrollLeft;
-      setInterval(function(){
+      var lastFrameTime = null;
+      var lastTick = performance.now();
+
+      function advance(deltaMs){
         // if something external (drag, button, wheel) moved the track, resync our float baseline
         if(Math.abs(track.scrollLeft - lastSyncedInt) > 0.6 && Math.abs(track.scrollLeft - Math.round(virtualScroll)) > 1){
           virtualScroll = track.scrollLeft;
         }
         var paused = pointerActive || lightboxOpen || performance.now() < pauseUntil;
         if(!paused){
-          virtualScroll += AUTO_SPEED;
+          virtualScroll += PX_PER_SEC * (deltaMs / 1000);
           if(half > 0 && virtualScroll >= half) virtualScroll -= half;
           track.scrollLeft = virtualScroll;
         }
         lastSyncedInt = track.scrollLeft;
-      }, TICK_MS);
+      }
+
+      // primary driver: requestAnimationFrame, delta-time based (frame-rate independent)
+      function rafLoop(ts){
+        lastTick = performance.now();
+        if(lastFrameTime != null) advance(ts - lastFrameTime);
+        lastFrameTime = ts;
+        requestAnimationFrame(rafLoop);
+      }
+      requestAnimationFrame(rafLoop);
+
+      // safety net: some mobile/in-app browsers throttle rAF unpredictably — if it stalls,
+      // keep the drift going via a plain interval until rAF picks back up
+      setInterval(function(){
+        var now = performance.now();
+        if(now - lastTick > 500){
+          advance(300);
+          lastTick = now;
+        }
+      }, 300);
     }
   })();
 
