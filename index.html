@@ -501,6 +501,22 @@
             <blockquote>"Placeholder quote — a before/after: credit score or situation at the start, house keys by the end."</blockquote>
             <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Credit-rebuilding buyer · member since ____</div></footer>
           </article>
+          <article class="t-card">
+            <blockquote>"Placeholder quote — mention how fast things moved once the right property showed up."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Small business owner · member since ____</div></footer>
+          </article>
+          <article class="t-card">
+            <blockquote>"Placeholder quote — a line about starting over in a new city with none of the usual paperwork ready."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Recently relocated buyer · member since ____</div></footer>
+          </article>
+          <article class="t-card">
+            <blockquote>"Placeholder quote — note that no pay stubs or W-2 were needed to get approved."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Gig-economy buyer · member since ____</div></footer>
+          </article>
+          <article class="t-card">
+            <blockquote>"Placeholder quote — a family's story about finally having a place that's truly their own."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Multi-generational buyer · member since ____</div></footer>
+          </article>
           <article class="t-card" aria-hidden="true">
             <blockquote>"Placeholder quote — swap in a real story: the deal a member closed, the down payment they didn't need, the call that got them unstuck."</blockquote>
             <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">First-time homebuyer · member since ____</div></footer>
@@ -524,6 +540,22 @@
           <article class="t-card" aria-hidden="true">
             <blockquote>"Placeholder quote — a before/after: credit score or situation at the start, house keys by the end."</blockquote>
             <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Credit-rebuilding buyer · member since ____</div></footer>
+          </article>
+          <article class="t-card" aria-hidden="true">
+            <blockquote>"Placeholder quote — mention how fast things moved once the right property showed up."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Small business owner · member since ____</div></footer>
+          </article>
+          <article class="t-card" aria-hidden="true">
+            <blockquote>"Placeholder quote — a line about starting over in a new city with none of the usual paperwork ready."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Recently relocated buyer · member since ____</div></footer>
+          </article>
+          <article class="t-card" aria-hidden="true">
+            <blockquote>"Placeholder quote — note that no pay stubs or W-2 were needed to get approved."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Gig-economy buyer · member since ____</div></footer>
+          </article>
+          <article class="t-card" aria-hidden="true">
+            <blockquote>"Placeholder quote — a family's story about finally having a place that's truly their own."</blockquote>
+            <footer><div class="name">MEMBER NAME (PLACEHOLDER)</div><div class="role">Multi-generational buyer · member since ____</div></footer>
           </article>
         </div>
         <div class="t-arrows">
@@ -767,6 +799,11 @@
     function computeHalf(){ half = track.scrollWidth / 2; }
     computeHalf();
     window.addEventListener('resize', computeHalf);
+    // web fonts swapping in after first paint can reflow card widths slightly —
+    // recompute once they've settled so the loop seam stays pixel-exact (no visible snap)
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(computeHalf);
+    }
 
     function pauseFor(ms){ pauseUntil = Math.max(pauseUntil, performance.now() + ms); }
 
