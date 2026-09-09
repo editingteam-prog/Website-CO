@@ -572,7 +572,6 @@
       <div class="section-head reveal" style="margin-bottom:0;">
         <p class="eyebrow">Free resources</p>
         <h2>Grab these before you join</h2>
-        <p>Four guides, checklists, and scripts — swap in the real ones before sharing.</p>
       </div>
       <div class="archive-teaser reveal">
         <div class="mini-preview"><span class="num mono">01</span></div>
@@ -793,8 +792,13 @@
     function pauseFor(ms){ pauseUntil = Math.max(pauseUntil, performance.now() + ms); }
 
     track.addEventListener('scroll', function(){
-      if(half > 0 && track.scrollLeft >= half - 2){
+      if(half <= 0) return;
+      // wrap forward when reaching the end of the duplicated set, and backward when
+      // dragged back to the start — both directions loop seamlessly through the same buffer
+      if(track.scrollLeft >= half - 2){
         track.scrollLeft -= half;
+      } else if(track.scrollLeft <= 2){
+        track.scrollLeft += half;
       }
     }, {passive:true});
 
