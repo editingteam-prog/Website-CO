@@ -779,7 +779,6 @@
     var pauseUntil = 0;
     var pointerActive = false;
     var lightboxOpen = false;
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     function cardStep(){
       var card = track.querySelector('.t-card');
@@ -855,8 +854,10 @@
       if(e.key === 'Escape' && lightboxOpen) closeLightbox();
     });
 
-    if(!reduceMotion){
-      var PX_PER_SEC = 55; // clearly-visible drift speed (previous speed was too subtle against wide mobile cards)
+    {
+      // auto-scroll runs unconditionally, including for prefers-reduced-motion —
+      // an explicit, deliberate choice for this carousel specifically
+      var PX_PER_SEC = 30; // slow, ambient drift — visible but not hurried
       var virtualScroll = track.scrollLeft; // scrollLeft is integer-rounded; track our own float
       var lastSyncedInt = track.scrollLeft;
       var lastFrameTime = null;
