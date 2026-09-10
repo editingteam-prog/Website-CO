@@ -283,6 +283,42 @@
     .t-lightbox-card{animation:none;}
   }
 
+  /* email capture modal */
+  .email-modal{
+    display:none;position:fixed;inset:0;z-index:80;
+    align-items:center;justify-content:center;padding:1.5rem;
+  }
+  .email-modal.is-open{display:flex;}
+  .email-modal-backdrop{
+    position:absolute;inset:0;background:rgba(20,17,14,.5);
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  }
+  .email-modal-card{
+    position:relative;z-index:1;background:var(--surface);border:1px solid var(--line);
+    border-radius:8px;padding:2.25rem 1.9rem;max-width:420px;width:100%;text-align:center;
+    box-shadow:0 24px 64px -16px rgba(0,0,0,.35);
+    animation:lightbox-in .2s ease;
+  }
+  .email-modal-card h3{font-family:'Fraunces';font-style:italic;font-weight:600;font-size:1.4rem;margin-top:.7rem;text-wrap:balance;}
+  .email-modal-card p{color:var(--text-muted);font-size:.95rem;line-height:1.55;margin-top:.9rem;}
+  #emailCaptureForm{margin-top:1.4rem;display:flex;flex-direction:column;gap:.75rem;}
+  #emailCaptureInput{
+    width:100%;padding:.85em 1em;border-radius:4px;border:1px solid var(--line);
+    background:var(--surface);color:var(--text);font-family:'Archivo';font-size:.95rem;
+  }
+  #emailCaptureInput:focus-visible{outline:2px solid var(--gold-deep);outline-offset:1px;}
+  #emailCaptureForm .btn{width:100%;justify-content:center;}
+  .email-modal-close{
+    position:absolute;top:.85rem;right:.85rem;width:32px;height:32px;border-radius:50%;
+    border:1px solid var(--line);background:var(--surface);color:var(--text-muted);
+    display:grid;place-items:center;font-size:1.2rem;line-height:1;cursor:pointer;
+    transition:border-color .15s ease, color .15s ease;
+  }
+  .email-modal-close:hover{border-color:var(--gold);color:var(--gold-text);}
+  @media (prefers-reduced-motion:reduce){
+    .email-modal-card{animation:none;}
+  }
+
   /* closing band */
   .band{background:var(--gold);color:var(--gold-ink);padding:clamp(2.25rem,4vw,3rem) 0;}
   .band .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1.5rem;}
@@ -442,7 +478,7 @@
       <a href="#testimonials">Testimonials</a>
       <a href="#resources" onclick="openResources(event)">Resources</a>
     </nav>
-    <a class="btn btn-primary btn-sm" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join now</a>
+    <a class="btn btn-primary btn-sm" data-skool-gate href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join now</a>
   </div>
 </header>
 
@@ -473,7 +509,7 @@
           </span>
         </div>
         <p class="note">Weekly mentorship calls. No upcharges. Cancel anytime.</p>
-        <a class="btn btn-primary" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Become a Homeowner →</a>
+        <a class="btn btn-primary" data-skool-gate href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Become a Homeowner →</a>
       </div>
     </div>
   </section>
@@ -572,6 +608,27 @@
     </article>
   </div>
 
+  <div class="email-modal" id="emailModal" aria-hidden="true">
+    <div class="email-modal-backdrop" id="emailModalBackdrop"></div>
+    <div class="email-modal-card">
+      <button class="email-modal-close" id="emailModalClose" aria-label="Close">&times;</button>
+
+      <div id="emailModalForm">
+        <p class="eyebrow" style="justify-content:center;">Free tool</p>
+        <h3>Enter your email to get the tool for finding houses</h3>
+        <form id="emailCaptureForm">
+          <input type="email" id="emailCaptureInput" name="email" placeholder="you@email.com" required autocomplete="email">
+          <button type="submit" class="btn btn-primary">Get access</button>
+        </form>
+      </div>
+
+      <div id="emailModalThanks" hidden>
+        <h3>You're in.</h3>
+        <p>We are sending over the link to your email. Make sure to check your spam folder. You will be redirected to Skool now&hellip;</p>
+      </div>
+    </div>
+  </div>
+
   <section class="section" id="archive">
     <div class="wrap">
       <div class="section-head reveal" style="margin-bottom:0;">
@@ -591,7 +648,7 @@
   <div class="band">
     <div class="wrap">
       <h2>This is not a course. It's a mentorship.</h2>
-      <a class="btn btn-dark" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join Creative Owners →</a>
+      <a class="btn btn-dark" data-skool-gate href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join Creative Owners →</a>
     </div>
   </div>
 
@@ -693,7 +750,7 @@
     <div class="band">
       <div class="wrap">
         <h2>Ready to go deeper?</h2>
-        <a class="btn btn-dark" href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join Creative Owners →</a>
+        <a class="btn btn-dark" data-skool-gate href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join Creative Owners →</a>
       </div>
     </div>
   </main>
@@ -937,6 +994,97 @@
       });
     }, {threshold:.15});
     items.forEach(function(el){ io.observe(el); });
+  })();
+
+  (function(){
+    var modal = document.getElementById('emailModal');
+    if(!modal) return;
+    var backdrop = document.getElementById('emailModalBackdrop');
+    var closeBtn = document.getElementById('emailModalClose');
+    var formView = document.getElementById('emailModalForm');
+    var thanksView = document.getElementById('emailModalThanks');
+    var form = document.getElementById('emailCaptureForm');
+    var emailInput = document.getElementById('emailCaptureInput');
+    var redirectTimer = null;
+    var hasInteracted = false; // true once the user has opened or dismissed the gate at least once
+
+    function resetToForm(){
+      formView.hidden = false;
+      thanksView.hidden = true;
+      form.reset();
+    }
+
+    function openEmailModal(){
+      hasInteracted = true;
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEmailModal(){
+      hasInteracted = true;
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if(redirectTimer){ clearTimeout(redirectTimer); redirectTimer = null; }
+    }
+
+    // auto-popup 5s after load, unless the user already opened/dismissed it via a CTA by then
+    setTimeout(function(){
+      if(!hasInteracted) openEmailModal();
+    }, 5000);
+
+    // every primary "join" CTA opens this gate instead of going straight to Skool
+    document.querySelectorAll('[data-skool-gate]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        resetToForm();
+        openEmailModal();
+      });
+    });
+
+    // SECURITY NOTE: this Bearer token is still visible to any site visitor via view-source —
+    // that's unavoidable for a client-side call — but it is kept OUT of git history/source by
+    // substituting it in at deploy time from a GitHub Actions repo secret (see
+    // .github/workflows/deploy.yml). Never commit a real token in place of this placeholder.
+    var LEADCONNECTOR_TOKEN = '__LEADCONNECTOR_TOKEN__';
+
+    function upsertLead(email){
+      fetch('https://services.leadconnectorhq.com/contacts/upsert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Version': 'v3',
+          'Authorization': 'Bearer ' + LEADCONNECTOR_TOKEN
+        },
+        body: JSON.stringify({
+          email: email,
+          locationId: 'hhMLeAA1TdRT5KAZbUnr',
+          tags: 'filter_lead_magnet'
+        })
+      }).catch(function(err){
+        // fire-and-forget: a failed/blocked request (e.g. CORS) should never break the
+        // on-page thank-you/redirect flow for the visitor
+        console.error('LeadConnector upsert failed:', err);
+      });
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      upsertLead(emailInput.value);
+      formView.hidden = true;
+      thanksView.hidden = false;
+      redirectTimer = setTimeout(function(){
+        window.location.href = 'https://www.skool.com/creativeowners';
+      }, 10000);
+    });
+
+    closeBtn.addEventListener('click', closeEmailModal);
+    backdrop.addEventListener('click', closeEmailModal);
+    window.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && modal.classList.contains('is-open')) closeEmailModal();
+    });
   })();
 </script>
 
