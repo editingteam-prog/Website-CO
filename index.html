@@ -205,23 +205,13 @@
     .t-card footer .name{font-size:.82rem;}
     .t-card footer .role{font-size:.88rem;}
 
-    .archive-teaser p, .section-head p{font-size:1.05rem;}
-    .mini-preview{width:60px;height:78px;}
-    .mini-preview .num{font-size:1.1rem;}
+    .section-head p{font-size:1.05rem;}
 
     .band h2{font-size:1.7rem;}
     .band .btn{font-size:1rem;}
 
     footer.site .legal{font-size:.82rem;}
     footer.site nav a{font-size:.95rem;}
-
-    .page-view .hero-sm h1{font-size:2.2rem;}
-    .page-view .hero-sm p{font-size:1.05rem;}
-    .res-preview{width:120px;}
-    .res-body h3{font-size:1.3rem;}
-    .res-body p.desc{font-size:1rem;}
-    .tag{font-size:.75rem;}
-    .open, .copy-btn{font-size:.9rem;}
   }
 
   /* testimonials */
@@ -282,6 +272,25 @@
   @media (prefers-reduced-motion:reduce){
     .t-lightbox-card{animation:none;}
   }
+
+  /* single-resource tool page — no on-page button/nav links to this; reachable only via a
+     direct #filter-tool URL, e.g. shared in post CTAs */
+  .tool-page{position:fixed;inset:0;z-index:60;background:var(--ink);overflow-y:auto;}
+  .tool-page .mast .wrap{height:64px;}
+  .tool-page-back{font-size:.85rem;color:var(--text-muted);text-decoration:none;}
+  .tool-page-back:hover{color:var(--gold-text);}
+  .tool-page-main{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:2.5rem 0;}
+  .tool-page-wrap{max-width:560px;text-align:center;}
+  .tool-page-wrap h1{font-size:clamp(1.8rem,3vw + 1rem,2.5rem);margin-top:.7rem;}
+  .tool-page-wrap p{margin-top:1.1rem;color:var(--text-muted);font-size:1.05rem;line-height:1.6;}
+  .tool-page-actions{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.75rem;flex-wrap:wrap;}
+  .tool-page-copy{
+    font-family:'IBM Plex Mono';font-size:.78rem;letter-spacing:.04em;
+    background:none;border:1px solid var(--line);color:var(--text-muted);
+    padding:.7em 1em;border-radius:3px;cursor:pointer;transition:border-color .15s, color .15s;
+  }
+  .tool-page-copy:hover{border-color:var(--gold);color:var(--gold-text);}
+  .tool-page-copy:active{background:rgba(208,160,37,.1);}
 
   /* email capture modal */
   .email-modal{
@@ -368,64 +377,6 @@
     *{animation:none!important;}
   }
 
-  /* archive teaser strip */
-  .archive-teaser{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:1.75rem;}
-  .mini-preview{
-    width:52px;height:68px;flex:none;border-radius:4px;border:1px solid var(--line);
-    background:
-      repeating-linear-gradient(0deg, rgba(154,116,19,.12) 0px, rgba(154,116,19,.12) 1px, transparent 1px, transparent 14px),
-      linear-gradient(160deg, var(--surface-raised), var(--surface));
-    display:grid;place-items:center;
-  }
-  .mini-preview .num{font-family:'IBM Plex Mono';font-size:.95rem;color:var(--gold);font-weight:600;}
-
-  /* resources page-view */
-  .page-view{position:fixed;inset:0;z-index:60;background:var(--ink);overflow-y:auto;}
-  .page-view .mast .wrap{height:64px;}
-  .page-view .back{font-size:.85rem;color:var(--text-muted);text-decoration:none;}
-  .page-view .back:hover{color:var(--gold-text);}
-  .page-view .hero-sm{padding:clamp(2rem,5vw,3rem) 0 1rem;}
-  .page-view .hero-sm h1{font-size:clamp(1.8rem,3vw + 1rem,2.5rem);margin-top:.7rem;}
-  .page-view .hero-sm p{margin-top:.9rem;color:var(--text-muted);max-width:56ch;}
-  .wrap-narrow{max-width:820px;}
-
-  .res-list{padding:.5rem 0 2.5rem;}
-  .res-row{
-    display:flex;gap:1.5rem;padding:1.6rem 0;border-bottom:1px solid var(--line);
-    align-items:flex-start;position:relative;
-  }
-  .res-row:first-child{padding-top:0;}
-  .res-preview{
-    width:100px;aspect-ratio:3/4;flex:none;border-radius:4px;position:relative;
-    background:
-      repeating-linear-gradient(0deg, rgba(154,116,19,.14) 0px, rgba(154,116,19,.14) 1px, transparent 1px, transparent 16px),
-      linear-gradient(160deg, var(--surface-raised), var(--surface));
-    border:1px solid var(--line);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.55rem;
-  }
-  .res-preview .num{font-family:'IBM Plex Mono';font-size:1.4rem;font-weight:600;color:var(--gold);}
-  .res-body{flex:1;min-width:0;}
-  .tag{font-family:'IBM Plex Mono';font-size:.68rem;color:var(--text-muted);letter-spacing:.06em;}
-  .res-body h3{font-size:1.15rem;margin-top:.4rem;}
-  .res-body p.desc{color:var(--text-muted);font-size:.9rem;margin-top:.5rem;max-width:52ch;}
-  .res-actions{display:flex;align-items:center;gap:1rem;margin-top:1rem;flex-wrap:wrap;}
-  .open{
-    font-size:.85rem;font-weight:600;color:var(--gold-text);text-decoration:none;
-    display:inline-flex;align-items:center;min-height:38px;padding:.3em 0;
-  }
-  .open:hover{text-decoration:underline;}
-  .copy-btn{
-    font-family:'IBM Plex Mono';font-size:.68rem;letter-spacing:.04em;
-    background:none;border:1px solid var(--line);color:var(--text-muted);
-    padding:.7em .9em;border-radius:3px;cursor:pointer;transition:border-color .15s, color .15s;
-    min-height:38px;
-  }
-  .copy-btn:hover{border-color:var(--gold);color:var(--gold-text);}
-  .copy-btn:active{background:rgba(208,160,37,.1);}
-  @media (max-width:560px){
-    .res-row{flex-direction:column;}
-    .res-preview{width:84px;}
-  }
 </style>
 </head>
 <body>
@@ -481,7 +432,6 @@
     <nav class="links">
       <a href="#pricing">Pricing</a>
       <a href="#testimonials">Testimonials</a>
-      <a href="#resources" onclick="openResources(event)">Resources</a>
     </nav>
     <a class="btn btn-primary btn-sm" data-skool-gate href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join now</a>
   </div>
@@ -497,8 +447,8 @@
   <section class="section" id="pricing">
     <div class="wrap">
       <div class="hero-center">
-        <h1>Nobody taught you this way to <em>own</em> a home.</h1>
-        <p class="lede">NO CREDIT. NO DOWNPAYMENT. <span class="lede-break">NO BANK APPLICATION.</span></p>
+        <h1>BUY A HOUSE <em>WITHOUT</em> A BANK</h1>
+        <p class="lede">NO CREDIT? NO DOWN PAYMENT? <span class="lede-break">NO BANK APPLICATION?</span></p>
       </div>
 
       <div class="certificate certificate-centered" id="signupCard">
@@ -635,22 +585,6 @@
     </div>
   </div>
 
-  <section class="section" id="archive">
-    <div class="wrap">
-      <div class="section-head reveal" style="margin-bottom:0;">
-        <p class="eyebrow">Free resources</p>
-        <h2>Grab these before you join</h2>
-      </div>
-      <div class="archive-teaser reveal">
-        <div class="mini-preview"><span class="num mono">01</span></div>
-        <div class="mini-preview"><span class="num mono">02</span></div>
-        <div class="mini-preview"><span class="num mono">03</span></div>
-        <div class="mini-preview"><span class="num mono">04</span></div>
-        <a class="btn btn-primary" href="#resources" onclick="openResources(event)">View free resources →</a>
-      </div>
-    </div>
-  </section>
-
   <div class="band">
     <div class="wrap">
       <h2>This is not a course. It's a mentorship.</h2>
@@ -671,119 +605,52 @@
     <nav>
       <a href="#pricing">Pricing</a>
       <a href="#testimonials">Testimonials</a>
-      <a href="#resources" onclick="openResources(event)">Resources</a>
       <a href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Skool ↗</a>
     </nav>
   </div>
 </footer>
 
-<div class="page-view" id="resourcesView" hidden>
+<div class="tool-page" id="toolPage" hidden>
   <header class="mast">
     <div class="wrap">
-      <a class="brand" href="#top" onclick="closeResources(event)">
+      <a class="brand" href="#top" onclick="closeToolPage(event)">
         <div class="brand-logo brand-logo-sm" role="img" aria-label="Creative Owners Club"></div>
       </a>
-      <a class="back" href="#top" onclick="closeResources(event)">← Back to home</a>
+      <a class="tool-page-back" href="#top" onclick="closeToolPage(event)">← Back to home</a>
     </div>
   </header>
-  <main>
-    <section class="hero-sm">
-      <div class="wrap wrap-narrow">
-        <p class="eyebrow">The archive</p>
-        <h1>Free resources, before you join.</h1>
-        <p>Four placeholders below. Swap each for a real file or link, then use "Copy link" to grab that resource's own address for a caption or bio.</p>
-      </div>
-    </section>
-
-    <section class="res-list">
-      <div class="wrap wrap-narrow">
-
-        <div class="res-row" id="res-no-money-down">
-          <div class="res-preview"><span class="num mono">01</span></div>
-          <div class="res-body">
-            <span class="tag mono">GUIDE</span>
-            <h3>The No-Money-Down Playbook</h3>
-            <p class="desc">Placeholder description — replace with your real guide on buying without a bank down payment.</p>
-            <div class="res-actions">
-              <a class="open" href="#resources-no-money-down">Open resource →</a>
-              <button class="copy-btn" data-anchor="no-money-down" onclick="copyResourceLink(this)">Copy link</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="res-row" id="res-credit-free-checklist">
-          <div class="res-preview"><span class="num mono">02</span></div>
-          <div class="res-body">
-            <span class="tag mono">CHECKLIST</span>
-            <h3>Credit-Free Buying Checklist</h3>
-            <p class="desc">Placeholder description — replace with your real step-by-step checklist for buying without a credit check.</p>
-            <div class="res-actions">
-              <a class="open" href="#resources-credit-free-checklist">Open resource →</a>
-              <button class="copy-btn" data-anchor="credit-free-checklist" onclick="copyResourceLink(this)">Copy link</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="res-row" id="res-seller-financing-script">
-          <div class="res-preview"><span class="num mono">03</span></div>
-          <div class="res-body">
-            <span class="tag mono">SCRIPT</span>
-            <h3>The Seller Financing Script</h3>
-            <p class="desc">Placeholder description — replace with your real word-for-word script for approaching a seller about financing.</p>
-            <div class="res-actions">
-              <a class="open" href="#resources-seller-financing-script">Open resource →</a>
-              <button class="copy-btn" data-anchor="seller-financing-script" onclick="copyResourceLink(this)">Copy link</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="res-row" id="res-financing-glossary">
-          <div class="res-preview"><span class="num mono">04</span></div>
-          <div class="res-body">
-            <span class="tag mono">GLOSSARY</span>
-            <h3>Creative Financing Glossary</h3>
-            <p class="desc">Placeholder description — replace with your real plain-English glossary of the terms members hear on calls.</p>
-            <div class="res-actions">
-              <a class="open" href="#resources-financing-glossary">Open resource →</a>
-              <button class="copy-btn" data-anchor="financing-glossary" onclick="copyResourceLink(this)">Copy link</button>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <div class="band">
-      <div class="wrap">
-        <h2>Ready to go deeper?</h2>
-        <a class="btn btn-dark" data-skool-gate href="https://www.skool.com/creativeowners" target="_blank" rel="noopener">Join Creative Owners →</a>
+  <main class="tool-page-main">
+    <div class="wrap tool-page-wrap">
+      <p class="eyebrow" style="justify-content:center;">Free tool</p>
+      <h1>The Zillow Filter Tool</h1>
+      <p>A free tool that filters Zillow listings down to the homes actually worth pursuing — built to work alongside the strategies taught inside the community.</p>
+      <div class="tool-page-actions">
+        <a class="btn btn-primary" href="https://homes.creativeowners.com/" target="_blank" rel="noopener">Open the tool →</a>
+        <button class="tool-page-copy" id="toolPageCopy" onclick="copyToolPageLink(this)">Copy link</button>
       </div>
     </div>
   </main>
 </div>
 
 <script>
-  function openResources(e){
-    if(e) e.preventDefault();
-    var view = document.getElementById('resourcesView');
-    if(!view) return;
-    view.hidden = false;
-    view.scrollTop = 0;
+  function openToolPage(){
+    var page = document.getElementById('toolPage');
+    if(!page) return;
+    page.hidden = false;
+    page.scrollTop = 0;
     document.body.style.overflow = 'hidden';
-    if(!e) return;
-    history.replaceState(null, '', '#resources');
+    history.replaceState(null, '', '#filter-tool');
   }
-  function closeResources(e){
+  function closeToolPage(e){
     if(e) e.preventDefault();
-    var view = document.getElementById('resourcesView');
-    if(!view) return;
-    view.hidden = true;
+    var page = document.getElementById('toolPage');
+    if(!page) return;
+    page.hidden = true;
     document.body.style.overflow = '';
     history.replaceState(null, '', '#top');
   }
-  function copyResourceLink(btn){
-    var anchor = btn.getAttribute('data-anchor');
-    var url = location.origin + location.pathname + '#resources-' + anchor;
+  function copyToolPageLink(btn){
+    var url = location.origin + location.pathname + '#filter-tool';
     var original = btn.textContent;
     try{
       navigator.clipboard.writeText(url).then(function(){
@@ -799,6 +666,10 @@
     }
   }
   (function(){
+    if(location.hash === '#filter-tool') openToolPage();
+  })();
+
+  (function(){
     var el = document.getElementById('rateTimerValue');
     if(!el) return;
     function pad(n){ return n < 10 ? '0' + n : '' + n; }
@@ -813,17 +684,6 @@
     }
     tick();
     setInterval(tick, 1000);
-  })();
-
-  (function(){
-    var h = location.hash;
-    if(h === '#resources' || h.indexOf('#resources-') === 0){
-      openResources();
-      if(h.indexOf('#resources-') === 0){
-        var target = document.getElementById('res-' + h.slice('#resources-'.length));
-        if(target) setTimeout(function(){ target.scrollIntoView({behavior:'auto', block:'start'}); }, 30);
-      }
-    }
   })();
 
   (function(){
