@@ -292,14 +292,6 @@
   }
   #toolEmailCaptureInput:focus-visible{outline:2px solid var(--gold-deep);outline-offset:1px;}
   #toolEmailCaptureForm .btn{width:100%;justify-content:center;}
-  .tool-page-actions{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.75rem;flex-wrap:wrap;}
-  .tool-page-copy{
-    font-family:'IBM Plex Mono';font-size:.78rem;letter-spacing:.04em;
-    background:none;border:1px solid var(--line);color:var(--text-muted);
-    padding:.7em 1em;border-radius:3px;cursor:pointer;transition:border-color .15s, color .15s;
-  }
-  .tool-page-copy:hover{border-color:var(--gold);color:var(--gold-text);}
-  .tool-page-copy:active{background:rgba(208,160,37,.1);}
 
   /* email capture modal */
   .email-modal{
@@ -633,7 +625,7 @@
 
       <div id="toolFormView">
         <p class="eyebrow" style="justify-content:center;">Free Tool</p>
-        <h1>Filter Tool</h1>
+        <h1>ZILLOW FILTER TOOL</h1>
         <div class="tool-form-inner">
           <h3>Which email do you want me to send it to?</h3>
           <form id="toolEmailCaptureForm">
@@ -645,12 +637,8 @@
 
       <div id="toolThanksView" hidden>
         <h1>Just emailed it to you!</h1>
-        <p>Please check your inbox and spam folders. If you need help and guidance to buy a house or make money with Real Estate, Join Our Community!</p>
+        <p>Please check your inbox and spam folders. If you need help and guidance to buy a house or make money with Real Estate<br>Join Our Community!</p>
         <p class="redirect-countdown">Redirecting in <span id="toolRedirectCountdown">10</span>s</p>
-      </div>
-
-      <div class="tool-page-actions">
-        <button class="tool-page-copy" id="toolPageCopy" onclick="copyToolPageLink(this)">Copy link</button>
       </div>
     </div>
   </main>
@@ -672,22 +660,6 @@
     page.hidden = true;
     document.body.style.overflow = '';
     history.replaceState(null, '', '#top');
-  }
-  function copyToolPageLink(btn){
-    var url = location.origin + location.pathname + '#filter-tool';
-    var original = btn.textContent;
-    try{
-      navigator.clipboard.writeText(url).then(function(){
-        btn.textContent = 'Copied!';
-        setTimeout(function(){ btn.textContent = original; }, 1800);
-      }).catch(function(){
-        btn.textContent = 'Copy failed';
-        setTimeout(function(){ btn.textContent = original; }, 1800);
-      });
-    }catch(err){
-      btn.textContent = 'Copy failed';
-      setTimeout(function(){ btn.textContent = original; }, 1800);
-    }
   }
   (function(){
     if(location.hash === '#filter-tool') openToolPage();
@@ -922,9 +894,12 @@
       if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
     }
 
-    // auto-popup 5s after load, unless the user already opened/dismissed it via a CTA by then
+    // auto-popup 5s after load, unless the user already opened/dismissed it via a CTA by then,
+    // or is on the standalone tool page (that page has its own inline email form instead)
     setTimeout(function(){
-      if(!hasInteracted) openEmailModal();
+      var toolPage = document.getElementById('toolPage');
+      var onToolPage = toolPage && !toolPage.hidden;
+      if(!hasInteracted && !onToolPage) openEmailModal();
     }, 5000);
 
     // every primary "join" CTA opens this gate instead of going straight to Skool
