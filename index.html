@@ -625,11 +625,33 @@
       <h1>The Zillow Filter Tool</h1>
       <p>A free tool that filters Zillow listings down to the homes actually worth pursuing — built to work alongside the strategies taught inside the community.</p>
       <div class="tool-page-actions">
-        <a class="btn btn-primary" href="https://homes.creativeowners.com/" target="_blank" rel="noopener">Open the tool →</a>
+        <button type="button" class="btn btn-primary" id="toolPageGetAccess">Get access</button>
         <button class="tool-page-copy" id="toolPageCopy" onclick="copyToolPageLink(this)">Copy link</button>
       </div>
     </div>
   </main>
+</div>
+
+<div class="email-modal" id="toolEmailModal" aria-hidden="true">
+  <div class="email-modal-backdrop" id="toolEmailModalBackdrop"></div>
+  <div class="email-modal-card">
+    <button class="email-modal-close" id="toolEmailModalClose" aria-label="Close">&times;</button>
+
+    <div id="toolEmailModalForm">
+      <p class="eyebrow" style="justify-content:center;">Free tool</p>
+      <h3>Enter your email to get the Zillow Filter Tool</h3>
+      <form id="toolEmailCaptureForm">
+        <input type="email" id="toolEmailCaptureInput" name="email" placeholder="you@email.com" required autocomplete="email">
+        <button type="submit" class="btn btn-primary">Get access</button>
+      </form>
+    </div>
+
+    <div id="toolEmailModalThanks" hidden>
+      <h3>You're in.</h3>
+      <p>We're sending the tool your way — check your spam folder. You will be redirected to Skool now&hellip;</p>
+      <p class="redirect-countdown">Redirecting in <span id="toolRedirectCountdown">10</span>s</p>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -962,6 +984,93 @@
     backdrop.addEventListener('click', closeEmailModal);
     window.addEventListener('keydown', function(e){
       if(e.key === 'Escape' && modal.classList.contains('is-open')) closeEmailModal();
+    });
+  })();
+
+  (function(){
+    var modal = document.getElementById('toolEmailModal');
+    if(!modal) return;
+    var backdrop = document.getElementById('toolEmailModalBackdrop');
+    var closeBtn = document.getElementById('toolEmailModalClose');
+    var formView = document.getElementById('toolEmailModalForm');
+    var thanksView = document.getElementById('toolEmailModalThanks');
+    var form = document.getElementById('toolEmailCaptureForm');
+    var emailInput = document.getElementById('toolEmailCaptureInput');
+    var openBtn = document.getElementById('toolPageGetAccess');
+    var redirectTimer = null;
+    var countdownInterval = null;
+    var countdownEl = document.getElementById('toolRedirectCountdown');
+
+    function resetToForm(){
+      formView.hidden = false;
+      thanksView.hidden = true;
+      form.reset();
+    }
+
+    function openModal(){
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(){
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if(redirectTimer){ clearTimeout(redirectTimer); redirectTimer = null; }
+      if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+    }
+
+    if(openBtn) openBtn.addEventListener('click', function(){
+      resetToForm();
+      openModal();
+    });
+
+    // SECURITY NOTE: see the main email-gate IIFE above — same placeholder/substitution scheme.
+    var LEADCONNECTOR_TOKEN = '__LEADCONNECTOR_TOKEN__';
+
+    function upsertLead(email){
+      fetch('https://services.leadconnectorhq.com/contacts/upsert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Version': 'v3',
+          'Authorization': 'Bearer ' + LEADCONNECTOR_TOKEN
+        },
+        body: JSON.stringify({
+          email: email,
+          locationId: 'hhMLeAA1TdRT5KAZbUnr',
+          tags: 'filter_lead_magnet'
+        })
+      }).catch(function(err){
+        console.error('LeadConnector upsert failed:', err);
+      });
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      upsertLead(emailInput.value);
+      formView.hidden = true;
+      thanksView.hidden = false;
+
+      var secondsLeft = 10;
+      if(countdownEl) countdownEl.textContent = secondsLeft;
+      countdownInterval = setInterval(function(){
+        secondsLeft -= 1;
+        if(countdownEl) countdownEl.textContent = Math.max(secondsLeft, 0);
+        if(secondsLeft <= 0 && countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+      }, 1000);
+
+      redirectTimer = setTimeout(function(){
+        window.location.href = 'https://www.skool.com/creativeowners';
+      }, 10000);
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+    window.addEventListener('keydown', function(e){
+      if(e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
     });
   })();
 </script>
